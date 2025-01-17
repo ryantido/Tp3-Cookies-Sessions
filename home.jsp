@@ -1,16 +1,20 @@
-<%@ page import="javax.servlet.http.HttpSession" %>
+<%@ page import="javax.servlet.http.Cookie" %>
+<%@ page import="java.util.Arrays" %>
 <%
-    // Récupération de la session
-    HttpSession session = request.getSession(false);
+    // Vérification de la présence du cookie
+    Cookie[] cookies = request.getCookies();
     String userLogin = null;
 
-    if (session != null) {
-        userLogin = (String) session.getAttribute("userLogin");
+    if (cookies != null) {
+        userLogin = Arrays.stream(cookies)
+                          .filter(cookie -> "userLogin".equals(cookie.getName()))
+                          .map(Cookie::getValue)
+                          .findFirst()
+                          .orElse(null);
     }
 
     if (userLogin == null) {
         response.sendRedirect("login.jsp");
-        return;
     }
 %>
 <!DOCTYPE html>
